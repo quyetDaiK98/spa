@@ -1,11 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { motion, useAnimation } from "framer-motion";
+import { motion } from "framer-motion";
 import type { Variants } from "framer-motion";
 import { ArrowDown } from "lucide-react";
-import { useEffect } from "react";
-import { usePathname } from "next/navigation";
+
 
 const fadeUp: Variants = {
   hidden: { opacity: 0, y: 30 },
@@ -18,16 +17,6 @@ const fadeUp: Variants = {
 
 
 export default function HeroSection() {
-  const pathname = usePathname();
-  const controls = useAnimation();
-
-  console.log('pathname >>>>>', pathname);
-
-
-  useEffect(() => {
-    console.log('page on loaded', pathname);
-  }, [pathname])
-
   return (
     <section className="relative w-full min-h-screen flex overflow-hidden">
       {/* LEFT: text panel */}
@@ -36,14 +25,14 @@ export default function HeroSection() {
         style={{ backgroundColor: "var(--color-sage-dark)" }}
       >
         <div className="relative max-w-xl">
-          <motion.div animate={controls} custom={0} variants={fadeUp} initial="hidden"
+          <motion.div animate="visible" custom={0} variants={fadeUp} initial="hidden"
             className="flex items-center gap-3 mb-8">
             <span className="w-8 h-px" style={{ backgroundColor: "rgba(255,255,255,0.35)" }} />
             <p className="text-xs tracking-[0.3em] uppercase text-white/55"
               style={{ fontFamily: "var(--font-inter)" }}>Holistic Wellness · Hà Nội</p>
           </motion.div>
 
-          <motion.h1 whileInView="visible" custom={1} variants={fadeUp} initial="hidden" animate={controls}
+          <motion.h1 whileInView="visible" custom={1} variants={fadeUp} initial="hidden" animate="visible"
             className="text-white mb-8"
             style={{
               fontFamily: "var(--font-cormorant)", fontSize: "clamp(3.2rem,7vw,6rem)",
