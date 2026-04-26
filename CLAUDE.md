@@ -90,7 +90,6 @@ prisma/
 | Home           | /                |
 | About Us       | /about-us        |
 | Services       | /menus           |
-| Spa Etiquette  | /spa-etiquette   |
 | Contacts       | /contacts        |
 | Book Now (CTA) | /booking         |
 

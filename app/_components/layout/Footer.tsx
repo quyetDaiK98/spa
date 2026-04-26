@@ -122,7 +122,6 @@ export default function Footer() {
               {[
                 { label: "About Us", href: "/about-us" },
                 { label: "Services", href: "/menus" },
-                { label: "Spa Etiquette", href: "/spa-etiquette" },
                 { label: "Book Appointment", href: "/booking" },
                 { label: "Contacts", href: "/contacts" },
               ].map((l) => (
