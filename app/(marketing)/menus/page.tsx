@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import type { Variants } from "framer-motion";
@@ -14,6 +15,9 @@ const stagger: Variants = {
   visible: { transition: { staggerChildren: 0.12 } },
 };
 
+const BASE = "https://images.unsplash.com/photo-";
+const Q = "?auto=format&fit=crop&w=600&q=80";
+
 const categories = [
   {
     slug: "hanoi-spa-signature-full-body-treatment",
@@ -22,6 +26,7 @@ const categories = [
     desc: "Kết hợp Stone massage, Bamboo và Herbal — liệu pháp độc quyền cân bằng thần kinh và thúc đẩy tuần hoàn.",
     from: "1.190.000",
     badge: "Exclusive",
+    image: `${BASE}1544161515-4ab6ce6db874${Q}`,
     icon: (
       <svg viewBox="0 0 40 40" fill="none" className="w-8 h-8">
         <path d="M20 36 Q28 26 20 16 Q12 26 20 36Z" fill="currentColor" opacity="0.7" />
@@ -37,6 +42,7 @@ const categories = [
     desc: "Vietnamese, Thai, Swedish, Asian và nhiều kỹ thuật massage truyền thống giúp phục hồi toàn diện.",
     from: "740.000",
     badge: null,
+    image: `${BASE}1571019613454-1cb2f99b2d8b${Q}`,
     icon: (
       <svg viewBox="0 0 40 40" fill="none" className="w-8 h-8">
         <path d="M8 20 Q14 12 20 20 Q26 28 32 20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" fill="none" />
@@ -51,6 +57,7 @@ const categories = [
     desc: "Scrubs và Wraps cao cấp với nguyên liệu thiên nhiên: dừa, yến mạch, muối Biển Chết, trà xanh.",
     from: "880.000",
     badge: null,
+    image: `${BASE}1515377905703-c4788e51af15${Q}`,
     icon: (
       <svg viewBox="0 0 40 40" fill="none" className="w-8 h-8">
         <circle cx="20" cy="20" r="10" stroke="currentColor" strokeWidth="1.5" fill="none" />
@@ -66,6 +73,7 @@ const categories = [
     desc: "Liệu pháp chuyên sâu cho lưng, vai và đầu — giải phóng cơ căng mỏi, cải thiện tuần hoàn não.",
     from: "490.000",
     badge: null,
+    image: `${BASE}1519824145371-296894a0daa9${Q}`,
     icon: (
       <svg viewBox="0 0 40 40" fill="none" className="w-8 h-8">
         <path d="M20 8 Q26 12 26 20 Q26 30 20 34 Q14 30 14 20 Q14 12 20 8Z" stroke="currentColor" strokeWidth="1.5" fill="none" />
@@ -80,6 +88,7 @@ const categories = [
     desc: "Chăm sóc da mặt chuyên sâu với dòng Artistry skincare — làm sạch, cấp ẩm, săn chắc và chống lão hóa.",
     from: "990.000",
     badge: null,
+    image: `${BASE}1570172619644-dfd03ed5d881${Q}`,
     icon: (
       <svg viewBox="0 0 40 40" fill="none" className="w-8 h-8">
         <ellipse cx="20" cy="22" rx="10" ry="12" stroke="currentColor" strokeWidth="1.5" fill="none" />
@@ -96,6 +105,7 @@ const categories = [
     desc: "Foot Reflexology và Luxury Foot Massage kích thích đầu thần kinh, giải phóng tắc nghẽn nội tạng.",
     from: "660.000",
     badge: null,
+    image: `${BASE}1607779097040-26e80aa78e66${Q}`,
     icon: (
       <svg viewBox="0 0 40 40" fill="none" className="w-8 h-8">
         <path d="M14 30 Q10 24 12 18 Q14 12 20 12 Q24 12 26 16 L28 22 Q29 26 26 28 Q22 32 14 30Z" stroke="currentColor" strokeWidth="1.5" fill="none" />
@@ -111,6 +121,7 @@ const categories = [
     desc: "Jacuzzi gỗ Pơ Mu và Herbal Steam với 10+ loại thảo mộc quý — thải độc, phục hồi, thư giãn sâu.",
     from: "380.000",
     badge: null,
+    image: `${BASE}1540555700478-4be289fbecef${Q}`,
     icon: (
       <svg viewBox="0 0 40 40" fill="none" className="w-8 h-8">
         <path d="M10 28 Q10 20 20 20 Q30 20 30 28 L30 32 Q30 34 28 34 L12 34 Q10 34 10 32Z" stroke="currentColor" strokeWidth="1.5" fill="none" />
@@ -127,6 +138,7 @@ const categories = [
     desc: "Gói trải nghiệm toàn diện kết hợp nhiều dịch vụ — từ gói đôi lãng mạn đến gói thư giãn cá nhân.",
     from: "3.270.000",
     badge: "Best Value",
+    image: `${BASE}1506126613408-eca07ce68773${Q}`,
     icon: (
       <svg viewBox="0 0 40 40" fill="none" className="w-8 h-8">
         <rect x="10" y="16" width="20" height="16" rx="2" stroke="currentColor" strokeWidth="1.5" fill="none" />
@@ -198,26 +210,36 @@ export default function MenusPage() {
               <motion.div key={cat.slug} variants={fadeUp}>
                 <Link
                   href={`/menus/${cat.slug}`}
-                  className="group relative flex flex-col h-full min-h-[280px] rounded-[1.5rem] overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+                  className="group relative flex flex-col h-full rounded-[1.5rem] overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
                   style={{ backgroundColor: "var(--color-cream)" }}
                 >
-                  {cat.badge && (
-                    <span
-                      className="absolute top-5 right-5 text-[9px] tracking-[0.2em] uppercase px-3 py-1 rounded-full z-10"
-                      style={{
-                        backgroundColor: "var(--color-sage)",
-                        color: "#fff",
-                        fontFamily: "var(--font-inter)",
-                      }}
-                    >
-                      {cat.badge}
-                    </span>
-                  )}
+                  {/* Image block */}
+                  <div className="relative h-44 overflow-hidden">
+                    <Image
+                      src={cat.image}
+                      alt={cat.name.replace("\n", " ")}
+                      fill
+                      className="object-cover transition-transform duration-700 group-hover:scale-105"
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                    />
+                    {cat.badge && (
+                      <span
+                        className="absolute top-4 right-4 text-[9px] tracking-[0.2em] uppercase px-3 py-1 rounded-full z-10"
+                        style={{
+                          backgroundColor: "var(--color-sage)",
+                          color: "#fff",
+                          fontFamily: "var(--font-inter)",
+                        }}
+                      >
+                        {cat.badge}
+                      </span>
+                    )}
+                  </div>
 
-                  <div className="flex flex-col flex-1 p-7">
+                  <div className="flex flex-col flex-1 p-6">
                     {/* Icon */}
                     <div
-                      className="mb-5 w-14 h-14 rounded-2xl flex items-center justify-center"
+                      className="mb-4 w-12 h-12 rounded-xl flex items-center justify-center"
                       style={{ backgroundColor: "var(--color-sand)", color: "var(--color-sage-dark)" }}
                     >
                       {cat.icon}
@@ -228,7 +250,7 @@ export default function MenusPage() {
                       className="mb-3 leading-tight whitespace-pre-line"
                       style={{
                         fontFamily: "var(--font-cormorant)",
-                        fontSize: "1.45rem",
+                        fontSize: "1.35rem",
                         fontWeight: 400,
                         color: "var(--color-charcoal)",
                       }}
@@ -238,7 +260,7 @@ export default function MenusPage() {
 
                     {/* Desc */}
                     <p
-                      className="text-sm leading-relaxed flex-1 mb-6"
+                      className="text-sm leading-relaxed flex-1 mb-5"
                       style={{
                         color: "var(--color-muted)",
                         fontFamily: "var(--font-inter)",
