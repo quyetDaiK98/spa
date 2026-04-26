@@ -17,6 +17,7 @@ Website showcase giới thiệu sản phẩm và dịch vụ massage & spa cao c
 | Database  | Supabase (PostgreSQL)       |
 | ORM       | Prisma                      |
 | Language  | TypeScript                  |
+| Auth      | JWT (`jose`) + HTTP-only cookie |
 
 ---
 
@@ -56,27 +57,45 @@ Website showcase giới thiệu sản phẩm và dịch vụ massage & spa cao c
 
 ```
 app/
-├── (marketing)/
-│   ├── layout.tsx              # Shared Navbar + Footer
+├── (marketing)/                # Route group — co Navbar + Footer
+│   ├── layout.tsx
 │   ├── page.tsx                # Trang chu
 │   ├── about-us/page.tsx
 │   ├── menus/
 │   │   ├── page.tsx            # Tat ca dich vu
 │   │   └── [slug]/page.tsx     # Chi tiet tung danh muc
-│   ├── spa-etiquette/page.tsx
 │   ├── contacts/page.tsx
 │   └── booking/page.tsx
+├── (admin)/                    # Route group — KHONG co Navbar/Footer
+│   ├── layout.tsx              # Layout rong, chi render children
+│   └── admin/
+│       ├── page.tsx            # /admin — Dashboard (placeholder -> Dashboard)
+│       ├── login/page.tsx      # /admin/login — Trang dang nhap
+│       ├── bookings/
+│       │   ├── page.tsx        # /admin/bookings — Danh sach booking
+│       │   └── [id]/page.tsx   # /admin/bookings/[id] — Chi tiet booking
+│       ├── services/
+│       │   ├── page.tsx        # /admin/services — Danh muc dich vu
+│       │   ├── new/page.tsx    # /admin/services/new — Tao dich vu moi
+│       │   └── [slug]/
+│       │       ├── page.tsx    # /admin/services/[slug] — DS dich vu trong danh muc
+│       │       └── edit/page.tsx
+│       ├── packages/page.tsx   # /admin/packages — Quan ly goi dich vu
+│       └── testimonials/page.tsx # /admin/testimonials — Quan ly danh gia
 ├── _components/
 │   ├── ui/                     # shadcn components
 │   ├── sections/               # Hero, Services, About, Testimonials, CTA
 │   └── layout/                 # Navbar, Footer
 ├── _lib/
+│   ├── session.ts              # JWT encrypt/decrypt + cookie helpers
+│   ├── auth-actions.ts         # Server Actions: loginAction, logoutAction
 │   ├── supabase.ts
 │   └── prisma.ts
 ├── _hooks/
 ├── globals.css
 └── layout.tsx
 
+middleware.ts                   # Bao ve /admin/* — redirect neu chua login
 prisma/
 └── schema.prisma
 ```
@@ -339,6 +358,62 @@ model Testimonial {
 
 ---
 
+## Admin System
+
+### Auth
+
+- **Cơ chế**: Stateless JWT session lưu trong HTTP-only cookie `admin_session` (8h)
+- **Thư viện**: `jose` (đã install)
+- **Credentials**: lưu trong `.env.local` — `ADMIN_EMAIL` + `ADMIN_PASSWORD`
+- **Secret**: `SESSION_SECRET` trong `.env.local`
+- **Middleware** (`middleware.ts`): bảo vệ toàn bộ `/admin/*`, bỏ qua `/admin/login`
+- **Login**: `admin` / `admin` (development — đổi trước khi deploy)
+
+### Các trang Admin — trạng thái hiện tại
+
+| Route | File | Trạng thái | Chức năng |
+|---|---|---|---|
+| `/admin/login` | `(admin)/admin/login/page.tsx` | ✅ Done | Form login, error inline, loading state |
+| `/admin` | `(admin)/admin/page.tsx` | 🔲 Placeholder | Sẽ thay bằng Dashboard |
+| `/admin/bookings` | `(admin)/admin/bookings/page.tsx` | 🔲 TODO | Danh sách booking, filter, search, bulk action |
+| `/admin/bookings/[id]` | `(admin)/admin/bookings/[id]/page.tsx` | 🔲 TODO | Chi tiết booking, đổi status, ghi chú nội bộ |
+| `/admin/services` | `(admin)/admin/services/page.tsx` | 🔲 TODO | CRUD ServiceCategory, drag-drop thứ tự |
+| `/admin/services/[slug]` | `(admin)/admin/services/[slug]/page.tsx` | 🔲 TODO | CRUD Service + ServiceVariant trong danh mục |
+| `/admin/services/new` | `(admin)/admin/services/new/page.tsx` | 🔲 TODO | Form tạo service mới |
+| `/admin/packages` | `(admin)/admin/packages/page.tsx` | 🔲 TODO | CRUD Package |
+| `/admin/testimonials` | `(admin)/admin/testimonials/page.tsx` | 🔲 TODO | Approve/reject review, thêm thủ công |
+
+### Quy tắc Admin UI
+
+- **Không dùng** Navbar/Footer marketing trong admin
+- Layout admin sẽ có sidebar riêng khi build Dashboard
+- Design: dùng màu `cream` làm bg chính, `sage-dark` cho action buttons
+- Framer-motion **không bắt buộc** trong admin — ưu tiên performance
+- Server Actions cho mọi mutation (create/update/delete)
+- Tất cả data fetch phải qua Prisma server-side
+
+### Schema bổ sung cần thiết cho Admin
+
+```prisma
+// Service — thêm
+isVisible   Boolean  @default(true)
+
+// Package — thêm
+isVisible   Boolean  @default(true)
+
+// Testimonial — thêm
+isPublished Boolean  @default(false)
+
+// Booking — thêm
+confirmedAt DateTime?
+completedAt DateTime?
+staffNote   String?
+time        String?   // "09:00", "14:30", v.v.
+guests      Int       @default(1)
+```
+
+---
+
 ## Sections trang chu (thu tu)
 
 1. Navbar: logo trai, nav links giua, "Book Now" CTA; mobile: hamburger -> Sheet
@@ -457,9 +532,15 @@ npx prisma studio     # GUI quan ly data
 ## Bien moi truong (.env.local)
 
 ```
+# Supabase / Prisma
 DATABASE_URL=
 DIRECT_URL=
 NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
 SUPABASE_SERVICE_ROLE_KEY=
+
+# Admin auth (doi truoc khi deploy)
+ADMIN_EMAIL=admin
+ADMIN_PASSWORD=admin
+SESSION_SECRET=<32-byte hex string — dung: openssl rand -hex 32>
 ```
